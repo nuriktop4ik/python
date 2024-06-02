@@ -1,0 +1,26 @@
+import time
+import threading
+
+def create_file_with_delay(file_name):
+    time.sleep(1)
+    with open(file_name, "w") as file:
+        file.write("This is a test file.")
+
+start_time = time.time()
+for i in range(100):
+    create_file_with_delay(f"file_{i}.txt")
+end_time = time.time()
+print(f"Time taken for sequential execution: {end_time - start_time} seconds")
+
+start_time = time.time()
+threads = []
+for i in range(100):
+    thread = threading.Thread(target=create_file_with_delay, args=(f"file_{i}.txt",))
+    thread.start()
+    threads.append(thread)
+
+for thread in threads:
+    thread.join()
+
+end_time = time.time()
+print(f"Time taken for multithreaded execution: {end_time - start_time} seconds")
