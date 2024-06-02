@@ -1,0 +1,24 @@
+import pandas as pd
+
+file_names = ['1111.xlsx', '2222.xlsx', '3333.xlsx']
+dfs = [pd.read_excel(file) for file in file_names]
+
+merged_df = pd.concat(dfs)
+
+sorted_df = merged_df.sort_values(by=list(merged_df.columns), ascending=False)
+
+with pd.ExcelWriter('output.xlsx') as writer:
+    sorted_df.to_excel(writer, index=False)
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+    format_center = workbook.add_format({'align': 'center', 'valign': 'vcenter'})
+    format_border = workbook.add_format({'border': 1})
+    format_bold = workbook.add_format({'bold': True})
+    for col_num, value in enumerate(sorted_df.columns.values):
+        worksheet.write(0, col_num, value, format_border)
+    for row_num in range(1, sorted_df.shape[0] + 1):
+        for col_num in range(sorted_df.shape[1]):
+            worksheet.write(row_num, col_num, sorted_df.iloc[row_num - 1, col_num], format_center)
+    worksheet.set_column('A:Z', 15, format_border)
+    worksheet.freeze_panes(1, 0)
+    worksheet.autofilter(0, 0, sorted_df.shape[0], sorted_df.shape[1] - 1)
