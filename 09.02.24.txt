@@ -1,0 +1,9 @@
+# а)
+text = input("Введите текст: ")
+file_name = input("Введите имя файла для сохранения: ")
+
+with open(file_name, "w") as file:
+    file.write(text)
+print(f"Текст успешно сохранен в файле {file_name}")
+
+
