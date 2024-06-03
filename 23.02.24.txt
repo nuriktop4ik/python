@@ -1,0 +1,26 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+
+driver = webdriver.Chrome(executable_path="путь_к_вашему_chromedriver.exe")
+driver.get("https://www.gismeteo.kz/weather-nur-sultan-5164/")
+
+temperature_element = driver.find_element(By.CLASS_NAME, "unit_temperature_c")
+temperature = temperature_element.text
+
+print(f"Текущая температура в Астане: {temperature}")
+
+driver.quit()
+
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://www.gismeteo.kz/weather-nur-sultan-5164/"
+response = requests.get(url)
+
+soup = BeautifulSoup(response.text, "html.parser")
+
+temperature_element = soup.find(class_="unit_temperature_c")
+temperature = temperature_element.get_text(strip=True)
+
+print(f"Текущая температура в Астане: {temperature}")
