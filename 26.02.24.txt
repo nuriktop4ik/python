@@ -1,0 +1,40 @@
+import tkinter as tk
+import requests
+import json
+
+def fetch_post():
+    post_id = entry.get()
+    url = f"https://jsonplaceholder.typicode.com/posts/{post_id}"
+    
+    response = requests.get(url)
+    if response.status_code == 200:
+        post = json.loads(response.text)
+        text_field.config(state=tk.NORMAL)
+        text_field.delete(1.0, tk.END)
+        text_field.insert(tk.END, post['text'])
+        text_field.config(state=tk.DISABLED)
+        
+        with open(f"post_{post_id}.json", "w") as file:
+            json.dump(post, file, indent=4)
+    else:
+        text_field.config(state=tk.NORMAL)
+        text_field.delete(1.0, tk.END)
+        text_field.insert(tk.END, "Ошибка при загрузке поста")
+        text_field.config(state=tk.DISABLED)
+
+window = tk.Tk()
+window.title("Запрос к JSONPlaceholder")
+
+entry_label = tk.Label(window, text="Введите id поста:")
+entry_label.pack()
+entry = tk.Entry(window)
+entry.pack()
+
+fetch_button = tk.Button(window, text="Получить пост", command=fetch_post)
+fetch_button.pack()
+
+text_field = tk.Text(window, height=10, width=50)
+text_field.config(state=tk.DISABLED)
+text_field.pack()
+
+window.mainloop()
